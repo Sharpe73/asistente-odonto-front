@@ -22,7 +22,10 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import axios from 'axios';
 import Lottie from 'lottie-react';
 import botAnimation from '../assets/bot.json';
-import voiceWave from '../assets/voice-wave.json'; // 🆕 Animación de onda
+import voiceWave from '../assets/voice-wave.json';
+
+// ⬅️ NUEVO IMPORT
+import RobotDentista from "../components/RobotDentista";
 
 // ===============================
 // 🔗 Backend API URL
@@ -218,6 +221,10 @@ const ChatBot = () => {
   // ===============================
   return (
     <Box sx={{ minHeight: "100vh", background: "linear-gradient(to right, #e0c3fc, #8ec5fc)", display: "flex", alignItems: "center", justifyContent: "center", p: 2 }}>
+
+      {/* AGREGADO: ROBOT DENTISTA */}
+      <RobotDentista />
+
       <Paper elevation={10} sx={{ width: "100%", maxWidth: 700, borderRadius: 4, p: 3, backgroundColor: "rgba(255, 255, 255, 0.8)", backdropFilter: "blur(10px)" }}>
 
         {/* HEADER */}
@@ -297,7 +304,7 @@ const ChatBot = () => {
             Enviar
           </Button>
 
-          {/* 🎤 BOTÓN DEL MICRÓFONO CON ANIMACIÓN INTEGRADA */}
+          {/* 🎤 BOTÓN DEL MICRÓFONO */}
           <Tooltip title={isListening ? "Escuchando..." : "Hablar"}>
             <IconButton
               onClick={handleVoice}
@@ -323,7 +330,6 @@ const ChatBot = () => {
           </Tooltip>
         </Stack>
 
-        {/* 🔊 Indicador adicional opcional */}
         {isListening && (
           <Box sx={{ width: "100%", mt: 1, display: "flex", justifyContent: "center" }}>
             <Lottie animationData={voiceWave} style={{ width: 100, height: 60 }} loop />

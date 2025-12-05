@@ -1,0 +1,22 @@
+.robot-container {
+  width: 250px;
+  height: auto;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 20;
+  pointer-events: none; /* para que no interfiera con clics */
+}
+
+.robot-image {
+  width: 100%;
+  height: auto;
+  animation: idleMove 3s ease-in-out infinite;
+}
+
+/* Movimiento muy leve del cuerpo */
+@keyframes idleMove {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
