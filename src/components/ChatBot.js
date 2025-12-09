@@ -155,7 +155,7 @@ const ChatBot = () => {
         pregunta: newMsg.text,
       });
 
-      const respuesta = res.data?.respuesta || "No tengo información suficiente en el documento para responder eso.";
+      const respuesta = res.data?.respuesta || "No dispongo de información que permita responder esa pregunta.";
 
       const botMsg = { sender: "bot", text: respuesta };
       setMessages((prev) => [...prev, botMsg]);
