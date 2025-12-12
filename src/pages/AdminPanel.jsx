@@ -111,7 +111,7 @@ export default function AdminPanel() {
           </button>
         </form>
 
-        {/* BARRA DE PROGRESO */}
+        {/* 📊 BARRA DE PROGRESO */}
         {loading && (
           <div style={{ marginTop: 20 }}>
             <div style={styles.progressBar}>
@@ -122,7 +122,7 @@ export default function AdminPanel() {
                 }}
               />
             </div>
-            <p style={{ marginTop: 8 }}>{progreso}%</p>
+            <p style={{ marginTop: 8, fontSize: 13 }}>{progreso}%</p>
           </div>
         )}
 
@@ -151,7 +151,7 @@ const styles = {
     color: "#444",
   },
   header: {
-    backgroundColor: "#0033A0", // Azul U. de Chile
+    backgroundColor: "#0033A0", // Azul Universidad de Chile
     color: "#FFFFFF",
     padding: "20px 30px",
     borderRadius: 8,
@@ -170,7 +170,7 @@ const styles = {
     opacity: 0.9,
   },
   logoutBtn: {
-    backgroundColor: "#E4002B", // Rojo U. de Chile
+    backgroundColor: "#E4002B", // Rojo Universidad de Chile
     color: "#FFFFFF",
     border: "none",
     padding: "10px 16px",
