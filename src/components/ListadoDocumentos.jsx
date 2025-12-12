@@ -26,7 +26,7 @@ export default function ListadoDocumentos() {
           }
         );
 
-        setDocumentos(res.data.data || []);
+        setDocumentos(res.data.documentos || []);
       } catch (error) {
         setMensaje(
           error.response?.data?.mensaje || "Error al cargar documentos"
