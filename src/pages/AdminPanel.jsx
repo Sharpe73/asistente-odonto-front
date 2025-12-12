@@ -6,6 +6,7 @@ export default function AdminPanel() {
   const [archivo, setArchivo] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+  const [progreso, setProgreso] = useState(0);
 
   // 🔐 LOGOUT
   const handleLogout = () => {
@@ -16,6 +17,7 @@ export default function AdminPanel() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
+    setProgreso(0);
 
     if (!archivo) {
       setMensaje("Debes seleccionar un archivo PDF");
@@ -43,6 +45,12 @@ export default function AdminPanel() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
+          onUploadProgress: (progressEvent) => {
+            const porcentaje = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgreso(porcentaje);
+          },
         }
       );
 
@@ -56,6 +64,7 @@ export default function AdminPanel() {
       );
     } finally {
       setLoading(false);
+      setTimeout(() => setProgreso(0), 1000);
     }
   };
 
@@ -101,6 +110,21 @@ export default function AdminPanel() {
             {loading ? "Subiendo documento..." : "Subir PDF"}
           </button>
         </form>
+
+        {/* BARRA DE PROGRESO */}
+        {loading && (
+          <div style={{ marginTop: 20 }}>
+            <div style={styles.progressBar}>
+              <div
+                style={{
+                  ...styles.progressFill,
+                  width: `${progreso}%`,
+                }}
+              />
+            </div>
+            <p style={{ marginTop: 8 }}>{progreso}%</p>
+          </div>
+        )}
 
         {mensaje && <p style={styles.message}>{mensaje}</p>}
       </section>
@@ -178,5 +202,17 @@ const styles = {
   message: {
     marginTop: 12,
     fontWeight: "bold",
+  },
+  progressBar: {
+    height: 10,
+    width: "100%",
+    backgroundColor: "#E0E0E0",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#0033A0",
+    transition: "width 0.3s ease",
   },
 };
