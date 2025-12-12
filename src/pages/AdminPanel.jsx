@@ -6,6 +6,12 @@ export default function AdminPanel() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔐 LOGOUT
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
@@ -28,7 +34,7 @@ export default function AdminPanel() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
+      await axios.post(
         "https://asistente-odonto-production.up.railway.app/documentos/subir",
         formData,
         {
@@ -54,6 +60,13 @@ export default function AdminPanel() {
   return (
     <div style={{ maxWidth: 500, margin: "80px auto", textAlign: "center" }}>
       <h2>Panel Admin – Subir PDF</h2>
+
+      <button
+        onClick={handleLogout}
+        style={{ marginBottom: 20 }}
+      >
+        Cerrar sesión
+      </button>
 
       <form onSubmit={handleSubmit}>
         <input
