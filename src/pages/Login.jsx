@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Login() {
@@ -6,6 +7,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,10 +18,7 @@ export default function Login() {
     try {
       const res = await axios.post(
         "https://asistente-odonto-production.up.railway.app/auth/login",
-        {
-          usuario,
-          password,
-        }
+        { usuario, password }
       );
 
       // ✅ Guardar token JWT
@@ -28,7 +28,7 @@ export default function Login() {
 
       // ✅ Redirigir al panel admin
       setTimeout(() => {
-        window.location.href = "/admin";
+        navigate("/admin");
       }, 800);
 
     } catch (error) {
