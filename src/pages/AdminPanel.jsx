@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import ListadoDocumentos from "../components/ListadoDocumentos";
 
 export default function AdminPanel() {
   const [archivo, setArchivo] = useState(null);
@@ -48,6 +49,11 @@ export default function AdminPanel() {
       setMensaje("✅ PDF subido correctamente");
       setArchivo(null);
 
+      // 🔁 refrescar listado
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+
     } catch (error) {
       setMensaje(
         error.response?.data?.mensaje || "Error al subir el PDF"
@@ -58,7 +64,7 @@ export default function AdminPanel() {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "80px auto", textAlign: "center" }}>
+    <div style={{ maxWidth: 700, margin: "60px auto", textAlign: "center" }}>
       <h2>Panel Admin – Subir PDF</h2>
 
       <button
@@ -83,6 +89,9 @@ export default function AdminPanel() {
       </form>
 
       {mensaje && <p>{mensaje}</p>}
+
+      {/* 📄 LISTADO DE DOCUMENTOS */}
+      <ListadoDocumentos />
     </div>
   );
 }
