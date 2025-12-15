@@ -25,7 +25,6 @@ export default function AdminPanel() {
     }
 
     const token = localStorage.getItem("token");
-
     if (!token) {
       setMensaje("Sesión expirada. Inicia sesión nuevamente.");
       return;
@@ -45,10 +44,8 @@ export default function AdminPanel() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          onUploadProgress: (progressEvent) => {
-            const porcentaje = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
+          onUploadProgress: (e) => {
+            const porcentaje = Math.round((e.loaded * 100) / e.total);
             setProgreso(porcentaje);
           },
         }
@@ -56,15 +53,12 @@ export default function AdminPanel() {
 
       setMensaje("Documento subido correctamente ✔");
       setArchivo(null);
-
-      setTimeout(() => window.location.reload(), 800);
+      setTimeout(() => window.location.reload(), 900);
     } catch (error) {
-      setMensaje(
-        error.response?.data?.mensaje || "Error al subir el documento"
-      );
+      setMensaje(error.response?.data?.mensaje || "Error al subir el documento");
     } finally {
       setLoading(false);
-      setTimeout(() => setProgreso(0), 1000);
+      setTimeout(() => setProgreso(0), 1200);
     }
   };
 
@@ -75,7 +69,7 @@ export default function AdminPanel() {
         <div>
           <h1 style={styles.title}>Odonto.bot</h1>
           <p style={styles.subtitle}>
-            Panel administrativo – Universidad de Chile
+            Panel administrativo · Universidad de Chile
           </p>
         </div>
 
@@ -84,34 +78,37 @@ export default function AdminPanel() {
         </button>
       </header>
 
-      {/* BIENVENIDA */}
-      <section style={styles.welcome}>
-        <h2>Bienvenido al panel administrativo</h2>
-        <p>
-          Desde aquí puedes subir y administrar los documentos que alimentan el
-          conocimiento del asistente Odonto.bot.
-        </p>
-      </section>
+      {/* CONTEXTO */}
+      <div style={styles.context}>
+        Desde este panel puedes gestionar los documentos oficiales que alimentan
+        el conocimiento del asistente Odonto.bot.
+      </div>
 
-      {/* SUBIR PDF */}
-      <section style={styles.card}>
-        <h3>Subir nuevo documento PDF</h3>
+      {/* ACCIÓN PRINCIPAL */}
+      <section style={styles.primaryCard}>
+        <h3 style={styles.cardTitle}>Agregar documento PDF</h3>
+        <p style={styles.cardDescription}>
+          Sube documentos oficiales en formato PDF para incorporarlos al
+          conocimiento del asistente.
+        </p>
 
         <form onSubmit={handleSubmit}>
           <input
             type="file"
             accept="application/pdf"
+            style={styles.fileInput}
             onChange={(e) => setArchivo(e.target.files[0])}
           />
 
-          <br /><br />
-
-          <button type="submit" style={styles.primaryBtn} disabled={loading}>
-            {loading ? "Subiendo documento..." : "Subir PDF"}
+          <button
+            type="submit"
+            style={styles.primaryBtn}
+            disabled={loading}
+          >
+            {loading ? "Subiendo documento..." : "Subir documento"}
           </button>
         </form>
 
-        {/* 📊 BARRA DE PROGRESO */}
         {loading && (
           <div style={{ marginTop: 20 }}>
             <div style={styles.progressBar}>
@@ -122,7 +119,7 @@ export default function AdminPanel() {
                 }}
               />
             </div>
-            <p style={{ marginTop: 8, fontSize: 13 }}>{progreso}%</p>
+            <p style={styles.progressText}>{progreso}%</p>
           </div>
         )}
 
@@ -130,89 +127,130 @@ export default function AdminPanel() {
       </section>
 
       {/* LISTADO */}
-      <section style={styles.card}>
-        <h3>Documentos cargados</h3>
+      <section style={styles.secondaryCard}>
+        <h3 style={styles.cardTitle}>Documentos cargados</h3>
         <ListadoDocumentos />
       </section>
     </div>
   );
 }
 
-/* =======================
-   🎨 ESTILOS
-======================= */
+/* =========================
+   🎨 ESTILOS PROFESIONALES
+========================= */
 
 const styles = {
   page: {
-    backgroundColor: "#F5F7FA",
+    backgroundColor: "#F3F4F6",
     minHeight: "100vh",
-    padding: 30,
-    fontFamily: "Arial, sans-serif",
-    color: "#444",
+    padding: 24,
+    fontFamily: "Inter, Arial, sans-serif",
+    color: "#374151",
   },
+
   header: {
-    backgroundColor: "#0033A0", // Azul Universidad de Chile
-    color: "#FFFFFF",
-    padding: "20px 30px",
+    backgroundColor: "#FFFFFF",
+    padding: "14px 22px",
     borderRadius: 8,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 20,
+    border: "1px solid #E5E7EB",
   },
+
   title: {
     margin: 0,
-    fontSize: 28,
+    fontSize: 22,
+    fontWeight: 600,
+    color: "#0033A0",
   },
+
   subtitle: {
     margin: 0,
-    fontSize: 14,
-    opacity: 0.9,
+    fontSize: 13,
+    color: "#6B7280",
   },
+
   logoutBtn: {
-    backgroundColor: "#E4002B", // Rojo Universidad de Chile
-    color: "#FFFFFF",
-    border: "none",
-    padding: "10px 16px",
+    backgroundColor: "transparent",
+    color: "#6B7280",
+    border: "1px solid #D1D5DB",
+    padding: "8px 14px",
     borderRadius: 6,
     cursor: "pointer",
-    fontWeight: "bold",
+    fontSize: 13,
   },
-  welcome: {
+
+  context: {
+    fontSize: 14,
+    color: "#4B5563",
+    marginBottom: 18,
+  },
+
+  primaryCard: {
     backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 20,
+    padding: 24,
+    borderRadius: 10,
+    marginBottom: 28,
+    borderLeft: "5px solid #0033A0",
   },
-  card: {
+
+  secondaryCard: {
     backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 20,
+    padding: 22,
+    borderRadius: 10,
   },
+
+  cardTitle: {
+    margin: "0 0 8px 0",
+    fontSize: 18,
+    fontWeight: 600,
+  },
+
+  cardDescription: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 16,
+  },
+
+  fileInput: {
+    display: "block",
+    marginBottom: 14,
+  },
+
   primaryBtn: {
     backgroundColor: "#0033A0",
     color: "#FFFFFF",
     border: "none",
-    padding: "10px 18px",
+    padding: "10px 20px",
     borderRadius: 6,
     cursor: "pointer",
-    fontWeight: "bold",
+    fontWeight: 600,
   },
+
   message: {
-    marginTop: 12,
-    fontWeight: "bold",
+    marginTop: 14,
+    fontWeight: 500,
   },
+
   progressBar: {
-    height: 10,
+    height: 8,
     width: "100%",
-    backgroundColor: "#E0E0E0",
-    borderRadius: 5,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 4,
     overflow: "hidden",
   },
+
   progressFill: {
     height: "100%",
     backgroundColor: "#0033A0",
     transition: "width 0.3s ease",
+  },
+
+  progressText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#6B7280",
   },
 };
