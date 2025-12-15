@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import ListadoDocumentos from "../components/ListadoDocumentos";
 
@@ -7,6 +7,7 @@ export default function AdminPanel() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
   const [progreso, setProgreso] = useState(0);
+  const fileInputRef = useRef(null);
 
   // 🔐 LOGOUT
   const handleLogout = () => {
@@ -78,9 +79,7 @@ export default function AdminPanel() {
         </button>
       </header>
 
-      {/* CONTENEDOR */}
       <div style={styles.container}>
-        {/* CONTEXTO */}
         <p style={styles.context}>
           Desde este panel puedes gestionar los documentos oficiales que alimentan
           el conocimiento del asistente Odonto.bot.
@@ -95,16 +94,35 @@ export default function AdminPanel() {
           </p>
 
           <form onSubmit={handleSubmit}>
-            <input
-              type="file"
-              accept="application/pdf"
-              style={styles.fileInput}
-              onChange={(e) => setArchivo(e.target.files[0])}
-            />
+            {/* INPUT FILE ELEGANTE */}
+            <div style={styles.fileBox}>
+              <input
+                type="file"
+                accept="application/pdf"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={(e) => setArchivo(e.target.files[0])}
+              />
+
+              <button
+                type="button"
+                style={styles.secondaryBtn}
+                onClick={() => fileInputRef.current.click()}
+              >
+                Seleccionar PDF
+              </button>
+
+              <span style={styles.fileName}>
+                {archivo ? archivo.name : "Ningún archivo seleccionado"}
+              </span>
+            </div>
 
             <button
               type="submit"
-              style={styles.primaryBtn}
+              style={{
+                ...styles.primaryBtn,
+                opacity: loading ? 0.7 : 1,
+              }}
               disabled={loading}
             >
               {loading ? "Subiendo documento..." : "Subir documento"}
@@ -131,7 +149,10 @@ export default function AdminPanel() {
         {/* LISTADO */}
         <section style={styles.secondaryCard}>
           <h3 style={styles.cardTitle}>Documentos cargados</h3>
-          <ListadoDocumentos />
+
+          <div style={styles.tableWrapper}>
+            <ListadoDocumentos />
+          </div>
         </section>
       </div>
     </div>
@@ -139,7 +160,7 @@ export default function AdminPanel() {
 }
 
 /* =========================
-   🎨 ESTILOS INSTITUCIONALES
+   🎨 ESTILOS REFINADOS
 ========================= */
 
 const styles = {
@@ -222,25 +243,46 @@ const styles = {
     marginBottom: 18,
   },
 
-  fileInput: {
-    display: "block",
-    marginBottom: 16,
+  fileBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    marginBottom: 18,
+  },
+
+  fileName: {
+    fontSize: 14,
+    color: "#374151",
   },
 
   primaryBtn: {
     backgroundColor: "#0033A0",
     color: "#FFFFFF",
     border: "none",
-    padding: "12px 26px",
+    padding: "12px 28px",
     borderRadius: 8,
     cursor: "pointer",
     fontWeight: 600,
     fontSize: 15,
   },
 
+  secondaryBtn: {
+    backgroundColor: "#F3F4F6",
+    color: "#1F2937",
+    border: "1px solid #D1D5DB",
+    padding: "10px 16px",
+    borderRadius: 6,
+    cursor: "pointer",
+    fontSize: 14,
+  },
+
   message: {
     marginTop: 16,
     fontWeight: 500,
+  },
+
+  tableWrapper: {
+    marginTop: 10,
   },
 
   progressBar: {
