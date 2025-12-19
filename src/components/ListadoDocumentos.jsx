@@ -8,6 +8,7 @@ export default function ListadoDocumentos() {
   // 🔹 paginado
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const limit = 10;
 
   // modal
@@ -42,6 +43,7 @@ export default function ListadoDocumentos() {
 
       setDocumentos(res.data.documentos || []);
       setTotalPages(res.data.totalPages || 1);
+      setTotal(res.data.total || 0);
       setPage(res.data.page || pagina);
     } catch (error) {
       mostrarModal(
@@ -102,6 +104,9 @@ export default function ListadoDocumentos() {
     return <p style={styles.info}>No hay documentos registrados</p>;
   }
 
+  const desde = (page - 1) * limit + 1;
+  const hasta = Math.min(page * limit, total);
+
   return (
     <>
       <div style={{ marginTop: 20, overflowX: "auto" }}>
@@ -146,6 +151,11 @@ export default function ListadoDocumentos() {
           </tbody>
         </table>
       </div>
+
+      {/* 🔹 CONTADOR */}
+      <p style={styles.counter}>
+        Mostrando {desde}–{hasta} de {total} documentos
+      </p>
 
       {/* ===============================
           🔢 PAGINADO
@@ -272,13 +282,18 @@ const styles = {
     fontStyle: "italic",
     color: "#666",
   },
-
+  counter: {
+    marginTop: 12,
+    textAlign: "center",
+    fontSize: 14,
+    color: "#4B5563",
+  },
   pagination: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
-    marginTop: 18,
+    marginTop: 14,
   },
   pageBtn: {
     padding: "6px 12px",
