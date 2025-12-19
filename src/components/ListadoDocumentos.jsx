@@ -5,10 +5,15 @@ export default function ListadoDocumentos() {
   const [documentos, setDocumentos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔹 paginado
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
+
   // modal
   const [modal, setModal] = useState({
     visible: false,
-    tipo: "info", // info | success | error | confirm
+    tipo: "info",
     mensaje: "",
     onConfirm: null,
   });
@@ -16,9 +21,9 @@ export default function ListadoDocumentos() {
   const token = localStorage.getItem("token");
 
   // ===============================
-  // 📄 CARGAR DOCUMENTOS
+  // 📄 CARGAR DOCUMENTOS (PAGINADO)
   // ===============================
-  const cargarDocumentos = async () => {
+  const cargarDocumentos = async (pagina = 1) => {
     if (!token) {
       mostrarModal("error", "Sesión no válida. Vuelve a iniciar sesión.");
       setLoading(false);
@@ -26,14 +31,18 @@ export default function ListadoDocumentos() {
     }
 
     try {
+      setLoading(true);
+
       const res = await axios.get(
-        "https://asistente-odonto-production.up.railway.app/documentos/listar",
+        `https://asistente-odonto-production.up.railway.app/documentos/listar?page=${pagina}&limit=${limit}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       setDocumentos(res.data.documentos || []);
+      setTotalPages(res.data.totalPages || 1);
+      setPage(res.data.page || pagina);
     } catch (error) {
       mostrarModal(
         "error",
@@ -45,8 +54,9 @@ export default function ListadoDocumentos() {
   };
 
   useEffect(() => {
-    cargarDocumentos();
-  }, []);
+    cargarDocumentos(page);
+    // eslint-disable-next-line
+  }, [page]);
 
   // ===============================
   // 🗑️ ELIMINAR DOCUMENTO
@@ -61,7 +71,7 @@ export default function ListadoDocumentos() {
       );
 
       mostrarModal("success", "Documento eliminado correctamente ✔");
-      cargarDocumentos();
+      cargarDocumentos(page);
     } catch (error) {
       mostrarModal(
         "error",
@@ -138,6 +148,41 @@ export default function ListadoDocumentos() {
       </div>
 
       {/* ===============================
+          🔢 PAGINADO
+      =============================== */}
+      <div style={styles.pagination}>
+        <button
+          style={styles.pageBtn}
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          ← Anterior
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            style={{
+              ...styles.pageNumber,
+              backgroundColor: p === page ? "#0033A0" : "#F3F4F6",
+              color: p === page ? "#FFFFFF" : "#1F2937",
+            }}
+          >
+            {p}
+          </button>
+        ))}
+
+        <button
+          style={styles.pageBtn}
+          disabled={page === totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Siguiente →
+        </button>
+      </div>
+
+      {/* ===============================
           🪟 MODAL
       =============================== */}
       {modal.visible && (
@@ -158,10 +203,7 @@ export default function ListadoDocumentos() {
             <div style={styles.modalActions}>
               {modal.tipo === "confirm" ? (
                 <>
-                  <button
-                    style={styles.modalCancel}
-                    onClick={cerrarModal}
-                  >
+                  <button style={styles.modalCancel} onClick={cerrarModal}>
                     Cancelar
                   </button>
                   <button
@@ -175,10 +217,7 @@ export default function ListadoDocumentos() {
                   </button>
                 </>
               ) : (
-                <button
-                  style={styles.modalConfirm}
-                  onClick={cerrarModal}
-                >
+                <button style={styles.modalConfirm} onClick={cerrarModal}>
                   Aceptar
                 </button>
               )}
@@ -232,6 +271,28 @@ const styles = {
     marginTop: 10,
     fontStyle: "italic",
     color: "#666",
+  },
+
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 18,
+  },
+  pageBtn: {
+    padding: "6px 12px",
+    borderRadius: 6,
+    border: "1px solid #D1D5DB",
+    backgroundColor: "#FFFFFF",
+    cursor: "pointer",
+  },
+  pageNumber: {
+    padding: "6px 12px",
+    borderRadius: 6,
+    border: "1px solid #D1D5DB",
+    cursor: "pointer",
+    fontWeight: 500,
   },
 
   /* MODAL */
